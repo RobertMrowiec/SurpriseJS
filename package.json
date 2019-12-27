@@ -26,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/RobertMrowiec/SurpriseJS/issues"
   },
-  "homepage": "https://github.com/RobertMrowiec/SurpriseJS#readme"
+  "homepage": "https://github.com/RobertMrowiec/SurpriseJS#readme",
+  "dependencies": {
+    "inquirer": "^7.0.1",
+    "pluralize": "^8.0.0"
+  }
 }

@@ -1,79 +1,61 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const inquirer = require('inquirer');
+const pluralize = require('pluralize');
 const CURR_DIR = process.cwd();
-const CHOICES = fs.readdirSync(`${__dirname}/templates`);
-
-const SELECTPROJECT = {
-  name: 'project-choice',
-  type: 'list',
-  message: 'What project template would you like to generate?',
-  choices: CHOICES
-}
-
-const COREQUESTIONS = [
-  {
-    name: 'project-name',
-    type: 'input',
-    message: 'Project name:',
-    validate: function (input) {
-      if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-      else return 'Project name may only include letters, numbers, underscores and hashes.';
-    }
-  },
-  {
-    name: 'database-name',
-    type: 'input',
-    message: 'Database name:',
-    validate: function (input) {
-      if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-      else return 'Database name may only include letters, numbers, underscores and hashes.';
-    }
-  }
-];
-
-const ROUTEQUESTIONS = [
-  {
-    name: 'model-name',
-    type: 'input',
-    message: 'Model name: ',
-    validate: function (input) {
-      if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-      else return 'Model name may only include letters, numbers, underscores and hashes.';
-    }
-  },
-  {
-    name: 'route-name',
-    type: 'input',
-    message: 'Route name (ex. api/users): '
-  }
-]
+const { SELECTPROJECT, COREQUESTIONS, ROUTEQUESTIONS } = require('./questions')
 
 let selectedProject
 inquirer.prompt(SELECTPROJECT).then(answer => selectedProject = answer['project-choice']).then(() => {
   const templatePath = `${__dirname}/templates/${selectedProject}`;
-  if (selectedProject === 'surprisejs-core'){
-    inquirer.prompt(COREQUESTIONS)
-    .then(answers => {
-      const projectName = answers['project-name'];
-      const databaseName = answers['database-name'];
-
-      fs.mkdirSync(`${CURR_DIR}/${projectName}`);
-      createDirectoryContents(templatePath, projectName, databaseName);
-    });
-  } else if (selectedProject === 'surprisejs-route'){
-    inquirer.prompt(ROUTEQUESTIONS).then(answers => {
-      const modelName = upperFirstLetter(answers['model-name'])
-      const routeName = answers['route-name']
-      const writePath = `${CURR_DIR}/models/${modelName}.js`
-      const modelContent = fs.readFileSync(`${templatePath}/model.js`, 'utf8').replace(/Your-model-name/g, modelName);
-      fs.writeFileSync(writePath, modelContent, 'utf8');
-
-    })
+  switch(selectedProject) {
+    case 'surprisejs-core':
+      coreCLI(templatePath)
+      break
+    case 'surprisejs-route':
+      routeCLI(templatePath)
+      break
+    default:
+      console.log('Something went wrong');
   }
 })
 
-function createDirectoryContents (templatePath, newProjectPath, databaseName) {
+coreCLI = templatePath => inquirer.prompt(COREQUESTIONS).then(answers => {
+  const projectName = answers['project-name'];
+  const databaseName = answers['database-name'];
+
+  fs.mkdirSync(`${CURR_DIR}/${projectName}`);
+  createDirectoryContents(templatePath, projectName, databaseName);
+});
+
+routeCLI = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
+  const modelName = answers['model-name']
+  const upperFirstModelName = upperFirstLetter(modelName)
+  const lowerCaseModelName = modelName.toLowerCase()
+  const pluralModelName = pluralize(modelName)
+  const filesToCreate = fs.readdirSync(templatePath);
+  const routeName = answers['route-name']
+
+  addRouteToApplication(routeName, pluralModelName)
+  
+  fs.mkdirSync(`${CURR_DIR}/routes/${pluralModelName}`);
+  filesToCreate.forEach(file => {
+    const origFilePath = `${templatePath}/${file}`;
+    if (file === 'model.js'){
+      const writePath = `${CURR_DIR}/models/${upperFirstModelName}.js`
+      const modelContent = fs.readFileSync(origFilePath, 'utf8').replace(/Your-model-name/g, upperFirstModelName).replace(/Your-lower-model-name/g, lowerCaseModelName);
+
+      fs.writeFileSync(writePath, modelContent, 'utf8');
+    } else {
+      const writePath = `${CURR_DIR}/routes/${pluralModelName}/${file}`
+      const content = fs.readFileSync(origFilePath, 'utf8').replace(/Your-model-name/g, upperFirstModelName).replace(/Your-lower-model-name/g, lowerCaseModelName);
+
+      fs.writeFileSync(writePath, content, 'utf8');
+    }
+  })
+})
+
+createDirectoryContents = (templatePath, newProjectPath, databaseName = '') => {
   const filesToCreate = fs.readdirSync(templatePath);
 
   filesToCreate.forEach(file => {
@@ -93,3 +75,16 @@ function createDirectoryContents (templatePath, newProjectPath, databaseName) {
 }
 
 upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+addRouteToApplication = (routeName, pluralModelName) => {
+  const contents = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8')
+  const contentArray = contents.split('\n')
+  const reversedContentArray = contents.split('\n').reverse()
+  const lookingPart = reversedContentArray.find(string => string.includes('app.use('))
+  const lookingPartIndex = contentArray.indexOf(lookingPart)
+  const stringToAdd = `app.use('${routeName}', require('./routes/${pluralModelName}/router'))`
+  const concatString = `${lookingPart} \n${stringToAdd}`
+  contentArray[lookingPartIndex] = concatString;
+
+  fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+}
