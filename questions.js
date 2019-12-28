@@ -1,14 +1,28 @@
 const fs = require('fs');
-const CHOICES = fs.readdirSync(`${__dirname}/templates`);
+const CURR_DIR = process.cwd();
+
+module.exports.CURR_DIR = CURR_DIR;
+
+module.exports.SELECTCRUDROUTE = currentDir => {
+  const choices = fs.readdirSync(`${currentDir}/routes`, { withFileTypes: true })
+    .filter(directory => directory.name[0] !== '.')
+
+  return {
+    name: 'route-crud',
+    type: 'checkbox', //change to checkbox later
+    message: 'Select for which route You want to add default crud: ',
+    choices
+  }
+}
 
 const SELECTPROJECT = {
   name: 'project-choice',
   type: 'list',
   message: 'What project template would you like to generate?',
-  choices: CHOICES
+  choices: fs.readdirSync(`${__dirname}/templates`)
 }
-
 module.exports.SELECTPROJECT = SELECTPROJECT;
+
 const COREQUESTIONS = [
   {
     name: 'project-name',
