@@ -31,25 +31,35 @@ coreCLI = templatePath => inquirer.prompt(COREQUESTIONS).then(answers => {
   createDirectoryContent(templatePath, projectName, databaseName);
 });
 
-crudCLI = () => inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
-  const selectedRoutes = answers['route-crud']
-  selectedRoutes.forEach(selectedRoute => {
-    addCrudToRouter(selectedRoute)
+crudCLI = () => {
+  if (SELECTCRUDROUTE(CURR_DIR) === false) {
+    console.log('⚠️  Empty routes directory, use surprise-route option ⚠️');
+    return
+  }
+
+  inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
+    const selectedRoutes = answers['route-crud']
+    selectedRoutes.forEach(selectedRoute => {
+      addCrudToRouter(selectedRoute)
+    })
   })
-  
-
-
-})
+}
 
 routeCLI = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
   const modelName = answers['model-name']
-  const upperFirstModelName = upperFirstLetter(modelName)
+  const upperFirstModelName = pluralize(upperFirstLetter(modelName), 1)
   const lowerCaseModelName = modelName.toLowerCase()
   const pluralModelName = pluralize(modelName)
   const filesToCreate = fs.readdirSync(templatePath);
-  const routeName = answers['route-name']
+  let routeName = answers['route-name']
+  routeName = routeName[0] === '/' ? routeName : `/${routeName}`
 
-  addRouteToApplication(routeName, pluralModelName)
+  const response = addRouteToApplication(routeName, pluralModelName)
+
+  if (!response) {
+    console.log('⚠️  app.js does not exists, maybe You are in wrong directory?  ⚠️');
+    return
+  }
 
   fs.mkdirSync(`${CURR_DIR}/routes/${pluralModelName}`);
   filesToCreate.forEach(file => {
@@ -90,6 +100,10 @@ createDirectoryContent = (templatePath, newProjectPath, databaseName = '') => {
 upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 addRouteToApplication = (routeName, pluralModelName) => {
+  if (!fs.existsSync(`${CURR_DIR}/app.js`)) {
+    return false
+  }
+
   const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8')
   const contentArray = content.split('\n')
   const reversedContentArray = content.split('\n').reverse()
@@ -100,6 +114,7 @@ addRouteToApplication = (routeName, pluralModelName) => {
   contentArray[lookingPartIndex] = concatString;
 
   fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+  return true
 }
 
 addCrudToRouter = routeName => {
@@ -113,13 +128,26 @@ addCrudToRouter = routeName => {
   const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
 const { crud } = require('surprise-crud');
 
-crud(${modelName}, router);`
+crud(${modelName}, router, { pathFromCollection: false });`
   const concatString = `${lookingPart} \n${stringToAdd}`
   contentArray[lookingPartIndex] = concatString;
 
   fs.writeFileSync(`${CURR_DIR}/routes/${routeName}/router.js`, contentArray.join('\n'));
+
+  addSurpriseCrudToPackage()
 }
 
+addSurpriseCrudToPackage = () => {
+  const content = fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8')
+  const contentArray = content.split('\n')
+  const reversedContentArray = content.split('\n').reverse()
+  const lookingPart = reversedContentArray.find(string => string.includes('express'))
+  const lookingPartIndex = contentArray.indexOf(lookingPart)
+  const stringToAdd = '    "surprise-crud": "latest",'
+  const concatString = `${lookingPart} \n${stringToAdd}`
+  contentArray[lookingPartIndex] = concatString;
+  fs.writeFileSync(`${CURR_DIR}/package.json`, contentArray.join('\n'));
+}
 
 findLastStringOccurence = (location, lookingString) => {
   

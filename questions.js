@@ -4,15 +4,22 @@ const CURR_DIR = process.cwd();
 module.exports.CURR_DIR = CURR_DIR;
 
 module.exports.SELECTCRUDROUTE = currentDir => {
-  const choices = fs.readdirSync(`${currentDir}/routes`, { withFileTypes: true })
-    .filter(directory => directory.name[0] !== '.')
+  if (fs.existsSync(`${currentDir}/routes`)){
+    const choices = fs.readdirSync(`${currentDir}/routes`, { withFileTypes: true })
+      .filter(directory => directory.name[0] !== '.')
 
-  return {
-    name: 'route-crud',
-    type: 'checkbox', //change to checkbox later
-    message: 'Select for which route You want to add default crud: ',
-    choices
+    if (choices.length > 0) {
+      return {
+        name: 'route-crud',
+        type: 'checkbox',
+        message: 'Select for which route You want to add default crud: ',
+        choices
+      }
+    } else {
+      return false
+    }
   }
+  return false
 }
 
 const SELECTPROJECT = {
