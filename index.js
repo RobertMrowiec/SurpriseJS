@@ -18,6 +18,9 @@ inquirer.prompt(SELECTPROJECT).then(answer => {
     case 'surprisejs-route':
       routeCLI(templatePath)
       break
+    case 'surprisejs-cors':
+      corsCLI()
+      break
     default:
       console.log('Something went wrong');
   }
@@ -97,7 +100,27 @@ createDirectoryContent = (templatePath, newProjectPath, databaseName = '') => {
   });
 }
 
-upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+corsCLI = () => {
+  if (!fs.existsSync(`${CURR_DIR}/app.js`)) {
+    console.log('⚠️  app.js does not exists, maybe You are in wrong directory?  ⚠️');
+    return
+  }
+  
+  return addCorsToApplication()
+};
+
+addCorsToApplication = () => {
+  const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8')
+  const contentArray = content.split('\n')
+  const reversedContentArray = content.split('\n').reverse()
+  const lookingPart = reversedContentArray.find(string => string.includes(`app.use('`))
+  const lookingPartIndex = contentArray.indexOf(lookingPart)
+  const stringToAdd = `app.use(require('surprise-cors')('*')) // You can replace '*' to array of hosts like ["http://localhost:4200", "https://www.myapp.com"]; \n`
+  const concatString = `${stringToAdd}\n${lookingPart}`
+  contentArray[lookingPartIndex] = concatString
+  fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+  console.log('💙 Default CORS added to app.js successfully 💙');
+}
 
 addRouteToApplication = (routeName, pluralModelName) => {
   if (!fs.existsSync(`${CURR_DIR}/app.js`)) {
@@ -126,14 +149,14 @@ addCrudToRouter = routeName => {
   const lookingPart = reversedContentArray.find(string => string.includes('const '))
   const lookingPartIndex = contentArray.indexOf(lookingPart)
   const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
-const { crud } = require('surprise-crud');
-
-crud(${modelName}, router, { pathFromCollection: false });`
+  const { crud } = require('surprise-crud');
+  
+  crud(${modelName}, router, { pathFromCollection: false });`
   const concatString = `${lookingPart} \n${stringToAdd}`
-  contentArray[lookingPartIndex] = concatString;
-
+  contentArray[lookingPartIndex] = concatString
+  
   fs.writeFileSync(`${CURR_DIR}/routes/${routeName}/router.js`, contentArray.join('\n'));
-
+  
   addSurpriseCrudToPackage()
 }
 
@@ -149,6 +172,6 @@ addSurpriseCrudToPackage = () => {
   fs.writeFileSync(`${CURR_DIR}/package.json`, contentArray.join('\n'));
 }
 
-findLastStringOccurence = (location, lookingString) => {
-  
-}
+// findLastStringOccurence = (location, lookingString) => {
+// }
+upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);

@@ -30,6 +30,7 @@
   "dependencies": {
     "inquirer": "^7.0.1",
     "pluralize": "^8.0.0",
-    "surprise-crud": "^0.3.2"
+    "surprise-crud": "^0.3.2",
+    "surprisejs-cors": "0.0.3"
   }
 }
