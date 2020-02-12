@@ -4,7 +4,8 @@
   "description": "SurpriseJS is a new framework for Node.js. It uses express.js and mongodb with mongoose",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -12,7 +13,7 @@
   },
   "bin": {
     "generate": "./index.js"
-  }, 
+  },
   "keywords": [
     "node.js",
     "javascript",
