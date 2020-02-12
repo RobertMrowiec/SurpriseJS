@@ -3,6 +3,8 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const pluralize = require('pluralize');
+const process = require('process');
+// const exec = require('child_process').exec;
 const {
   SELECTPROJECT,
   COREQUESTIONS,
@@ -74,8 +76,7 @@ authCLI = async templatePath => {
     const middlewareContent = fs.readFileSync(`${templatePath}/middleware/auth.js`)
     fs.writeFileSync(`${CURR_DIR}/middlewares/auth.js`, middlewareContent)
 
-    const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8');
-    if (content.includes(`require('./middlewares/auth'))`)) return
+    if (fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`require('./middlewares/auth'))`)) return
 
     const prefixAnswer = await inquirer.prompt({
       name: 'prefix',
@@ -84,13 +85,11 @@ authCLI = async templatePath => {
     })
     let { prefix } = prefixAnswer
     prefix = prefix === '' ? '/' : prefix[0] === '/' ? prefix : `/${prefix}`;
-    const contentArray = content.split('\n');
-    const lookingPart = contentArray.find(string => string.includes(`app.use('`));
-    const lookingPartIndex = contentArray.indexOf(lookingPart);
+
+    const targetFile = `${CURR_DIR}/app.js`;
+    const lookingString = `app.use('`;
     const stringToAdd = `app.use('${prefix}', require('./middlewares/auth'));`;
-    const concatString = `${stringToAdd}\n${lookingPart}`;
-    contentArray[lookingPartIndex] = concatString;
-    fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+    findAndReplaceFile(targetFile, lookingString, stringToAdd)
   }
 
   if (generateFiles) {
@@ -101,15 +100,10 @@ authCLI = async templatePath => {
       const writePath = `${CURR_DIR}/routes/login/${file}`;
       fs.writeFileSync(writePath, loginContent, 'utf8');
     });
-    const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8');
-    const reversedContentArray = content.split('\n').reverse();
-    const contentArray = content.split('\n');
-    const lookingPart = reversedContentArray.find(string => string.includes(`app.use('`));
-    const lookingPartIndex = contentArray.indexOf(lookingPart);
+    const targetFile = `${CURR_DIR}/app.js`;
+    const lookingString = `app.use('`;
     const stringToAdd = `app.use('/login', require('./routes/logins/router'));`;
-    const concatString = `${lookingPart}\n${stringToAdd}`;
-    contentArray[lookingPartIndex] = concatString;
-    fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+    findAndReplaceFile(targetFile, lookingString, stringToAdd)
   }
 };
 
@@ -119,6 +113,10 @@ coreCLI = templatePath => inquirer.prompt(COREQUESTIONS).then(answers => {
 
   fs.mkdirSync(`${CURR_DIR}/${projectName}`);
   createDirectoryContent(templatePath, projectName, databaseName);
+
+  console.log('Running npm install')
+  const exec = require('child_process').exec;
+  child = exec(`cd ${projectName} && npm install`).stdout.pipe(process.stdout)
 });
 
 crudCLI = () => {
@@ -143,14 +141,10 @@ routeCLI = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
   const filesToCreate = fs.readdirSync(templatePath);
   let routeName = answers['route-name'];
   routeName = routeName[0] === '/' ? routeName : `/${routeName}`;
-
   const response = addRouteToApplication(routeName, pluralModelName);
 
   if (!response) {
-    console.log(
-      '⚠️  app.js does not exists, maybe You are in wrong directory?  ⚠️'
-    );
-    return;
+    return console.log('⚠️  app.js does not exists, maybe You are in wrong directory?  ⚠️');
   }
 
   fs.mkdirSync(`${CURR_DIR}/routes/${pluralModelName}`);
@@ -158,16 +152,14 @@ routeCLI = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
     const origFilePath = `${templatePath}/${file}`;
     if (file === 'model.js') {
       const writePath = `${CURR_DIR}/models/${upperFirstModelName}.js`;
-      const modelContent = fs
-        .readFileSync(origFilePath, 'utf8')
+      const modelContent = fs.readFileSync(origFilePath, 'utf8')
         .replace(/Your-model-name/g, upperFirstModelName)
         .replace(/Your-lower-model-name/g, lowerCaseModelName);
 
       fs.writeFileSync(writePath, modelContent, 'utf8');
     } else {
       const writePath = `${CURR_DIR}/routes/${pluralModelName}/${file}`;
-      const content = fs
-        .readFileSync(origFilePath, 'utf8')
+      const content = fs.readFileSync(origFilePath, 'utf8')
         .replace(/Your-model-name/g, upperFirstModelName)
         .replace(/Your-lower-model-name/g, lowerCaseModelName);
 
@@ -185,36 +177,23 @@ createDirectoryContent = (templatePath, newProjectPath, databaseName = '') => {
 
     if (stats.isFile()) {
       const writePath = `${CURR_DIR}/${newProjectPath}/${file}`;
-      const content = fs
-        .readFileSync(origFilePath, 'utf8')
-        .replace('Your-database-name', databaseName);
-
+      const content = fs.readFileSync(origFilePath, 'utf8').replace('Your-database-name', databaseName);
       fs.writeFileSync(writePath, content, 'utf8');
     } else if (stats.isDirectory()) {
       fs.mkdirSync(`${CURR_DIR}/${newProjectPath}/${file}`);
-      createDirectoryContent(
-        `${templatePath}/${file}`,
-        `${newProjectPath}/${file}`
-      );
+      createDirectoryContent(`${templatePath}/${file}`, `${newProjectPath}/${file}`);
     }
   });
 };
 
 corsCLI = () => {
-  const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8');
-  if (content.includes(`app.use(require('surprise-cors')`)) {
+  if (fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`app.use(require('surprise-cors')`)) {
     return console.log('⚠️  This application already has CORS defined  ⚠️');
   }
-  const contentArray = content.split('\n');
-  const reversedContentArray = content.split('\n').reverse();
-  const lookingPart = reversedContentArray.find(string =>
-    string.includes(`app.use('`)
-  );
-  const lookingPartIndex = contentArray.indexOf(lookingPart);
+  const targetFile = `${CURR_DIR}/app.js`
+  const lookingString = `app.use('`
   const stringToAdd = `app.use(require('surprise-cors')('*')) // You can replace '*' to array of hosts like ["http://localhost:4200", "https://www.myapp.com"]; \n`;
-  const concatString = `${stringToAdd}\n${lookingPart}`;
-  contentArray[lookingPartIndex] = concatString;
-  fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+  findAndReplaceFile(targetFile, lookingString, stringToAdd, true)
   console.log('💙 Default CORS added to app.js successfully 💙');
 };
 
@@ -223,64 +202,42 @@ addRouteToApplication = (routeName, pluralModelName) => {
     return false;
   }
 
-  const content = fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8');
-  const contentArray = content.split('\n');
-  const reversedContentArray = content.split('\n').reverse();
-  const lookingPart = reversedContentArray.find(string =>
-    string.includes('app.use(')
-  );
-  const lookingPartIndex = contentArray.indexOf(lookingPart);
+  const targetFile = `${CURR_DIR}/app.js`;
+  const lookingString = 'app.use(';
   const stringToAdd = `app.use('${routeName}', require('./routes/${pluralModelName}/router'))`;
-  const concatString = `${lookingPart} \n${stringToAdd}`;
-  contentArray[lookingPartIndex] = concatString;
-
-  fs.writeFileSync(`${CURR_DIR}/app.js`, contentArray.join('\n'));
+  findAndReplaceFile(targetFile, lookingString, stringToAdd)
   return true;
 };
 
 addCrudToRouter = routeName => {
   const nounSelectedRoute = pluralize(routeName, 1);
   const modelName = upperFirstLetter(nounSelectedRoute);
-  const content = fs.readFileSync(
-    `${CURR_DIR}/routes/${routeName}/router.js`,
-    'utf8'
-  );
-  const contentArray = content.split('\n');
-  const reversedContentArray = content.split('\n').reverse();
-  const lookingPart = reversedContentArray.find(string =>
-    string.includes('const ')
-  );
-  const lookingPartIndex = contentArray.indexOf(lookingPart);
+  const targetFile = `${CURR_DIR}/routes/${routeName}/router.js`;
+  const lookingString = 'const ';
   const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
   const { crud } = require('surprise-crud');
   
   crud(${modelName}, router, { pathFromCollection: false });`;
-  const concatString = `${lookingPart} \n${stringToAdd}`;
-  contentArray[lookingPartIndex] = concatString;
-
-  fs.writeFileSync(
-    `${CURR_DIR}/routes/${routeName}/router.js`,
-    contentArray.join('\n')
-  );
-
+  findAndReplaceFile(targetFile, lookingString, stringToAdd)
   addSurpriseCrudToPackage();
 };
 
 addSurpriseCrudToPackage = () => {
-  const content = fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8');
-  const contentArray = content.split('\n');
-  const reversedContentArray = content.split('\n').reverse();
-  const lookingPart = reversedContentArray.find(string =>
-    string.includes('express')
-  );
-  const lookingPartIndex = contentArray.indexOf(lookingPart);
+  const targetFile = `${CURR_DIR}/package.json`;
+  const lookingString = 'express';
   const stringToAdd = '    "surprise-crud": "latest",';
-  const concatString = `${lookingPart} \n${stringToAdd}`;
-  contentArray[lookingPartIndex] = concatString;
-  fs.writeFileSync(`${CURR_DIR}/package.json`, contentArray.join('\n'));
+  findAndReplaceFile(targetFile, lookingString, stringToAdd);
 };
 
-// findLastStringOccurence = (location, lookingString) => {
-// }
-
 upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+findAndReplaceFile = (targetFile, lookingString, stringToAdd, reverse = false) => {
+  const content = fs.readFileSync(targetFile, 'utf8');
+  const contentArray = content.split('\n');
+  const reversedContentArray = content.split('\n').reverse();
+  const lookingPart = reversedContentArray.find(string => string.includes(lookingString));
+  const lookingPartIndex = contentArray.indexOf(lookingPart);
+  const concatString = reverse ? `${stringToAdd}\n${lookingPart}` : `${lookingPart}\n${stringToAdd}`;
+  contentArray[lookingPartIndex] = concatString;
+  fs.writeFileSync(targetFile, contentArray.join('\n'));
+}

@@ -8,7 +8,7 @@ mongoose.set('useCreateIndex', true);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-module.exports = dbUrl =>
-  mongoose
-    .connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => app);
+module.exports = dbUrl => mongoose.connect(dbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => app);
