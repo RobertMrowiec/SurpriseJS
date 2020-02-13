@@ -1,5 +1,6 @@
 const fs = require('fs');
 const CURR_DIR = process.cwd();
+const pluralize = require('pluralize');
 
 module.exports.CURR_DIR = CURR_DIR;
 
@@ -37,7 +38,7 @@ const COREQUESTIONS = [
     name: 'project-name',
     type: 'input',
     message: 'Project name:',
-    validate: function(input) {
+    validate: function (input) {
       if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
       else
         return 'Project name may only include letters, numbers, underscores and hashes.';
@@ -47,7 +48,7 @@ const COREQUESTIONS = [
     name: 'database-name',
     type: 'input',
     message: 'Database name:',
-    validate: function(input) {
+    validate: function (input) {
       if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
       else
         return 'Database name may only include letters, numbers and underscores.';
@@ -55,13 +56,12 @@ const COREQUESTIONS = [
   }
 ];
 module.exports.COREQUESTIONS = COREQUESTIONS;
-
 const ROUTEQUESTIONS = [
   {
     name: 'model-name',
     type: 'input',
     message: 'Model name: ',
-    validate: function(input) {
+    validate: function (input) {
       if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
       else return 'Model name may only include letters, numbers, underscores.';
     }
@@ -69,7 +69,8 @@ const ROUTEQUESTIONS = [
   {
     name: 'route-name',
     type: 'input',
-    message: 'Route name (ex. api/users): '
+    default: answers => `api/${pluralize(answers['model-name']).toLowerCase()}`,
+    message: 'Route name:'
   }
 ];
 module.exports.ROUTEQUESTIONS = ROUTEQUESTIONS;

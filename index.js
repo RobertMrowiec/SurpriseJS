@@ -117,7 +117,7 @@ auth = async templatePath => {
 
     const targetFile = `${CURR_DIR}/app.js`;
     const lookingString = last ? `app.use(` : `app.use('`;
-    const stringToAdd = `app.use('/login', require('./routes/logins/router'));`;
+    const stringToAdd = `app.use('/login', require('./routes/login/router'));`;
 
     findAndReplaceFile(targetFile, lookingString, stringToAdd, last)
     console.log('💙  Login route added to application successfully 💙')
@@ -136,26 +136,27 @@ core = templatePath => inquirer.prompt(COREQUESTIONS).then(answers => {
   fs.mkdirSync(`${CURR_DIR}/${projectName}`);
   createDirectoryContent(templatePath, projectName, databaseName);
 
+  console.log(`💙  After npm install please run cd ${projectName} and run npm start 💙`); // order change
   console.log('Running npm install...')
   exec(`cd ${projectName} && npm install`).stdout.pipe(process.stdout)
-  // add here log with info about cd {project name} and run 'npm start'
 });
 
-crud = () => {
+crud = async () => {
   if (SELECTCRUDROUTE(CURR_DIR) === false)
     return console.log('⚠️   Empty routes directory, use surprise-route option first ⚠️');
 
-  inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
+  await inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
     const selectedRoutes = answers['route-crud'];
     selectedRoutes.forEach(selectedRoute => {
       addCrudToRouter(selectedRoute);
       console.log(`💙  CRUD added to ${selectedRoute} route successfully 💙`)
     });
-    if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-crud')) {
-      console.log('Running npm install...')
-      exec(`npm install surprise-crud --save`).stdout.pipe(process.stdout)
-    }
   });
+
+  if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-crud')) {
+    console.log('Running npm install...')
+    exec(`npm install surprise-crud --save`).stdout.pipe(process.stdout)
+  }
 };
 
 route = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
@@ -244,20 +245,12 @@ addCrudToRouter = routeName => {
   const nounSelectedRoute = pluralize(routeName, 1);
   const modelName = upperFirstLetter(nounSelectedRoute);
   const targetFile = `${CURR_DIR}/routes/${routeName}/router.js`;
-  const lookingString = 'const ';
+  const lookingString = 'const router';
   const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
-  const { crud } = require('surprise-crud');
+const { crud } = require('surprise-crud');
   
-  crud(${modelName}, router, { pathFromCollection: false });`;
-  findAndReplaceFile(targetFile, lookingString, stringToAdd)
-  addSurpriseCrudToPackage();
-};
-
-addSurpriseCrudToPackage = () => {
-  const targetFile = `${CURR_DIR}/package.json`;
-  const lookingString = 'express';
-  const stringToAdd = '    "surprise-crud": "latest",';
-  findAndReplaceFile(targetFile, lookingString, stringToAdd);
+crud(${modelName}, router, { pathFromCollection: false });\n`;
+  findAndReplaceFile(targetFile, lookingString, stringToAdd, true)
 };
 
 upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
