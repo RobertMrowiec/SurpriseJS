@@ -95,7 +95,7 @@ auth = async templatePath => {
 
     const targetFile = `${CURR_DIR}/app.js`;
     const lookingString = last ? `app.use(` : `app.use('`;
-    const stringToAdd = `app.use('${prefix}', require('./middlewares/auth'));`;
+    const stringToAdd = `app.use('${prefix}', require('./middlewares/auth'));\n`;
 
     findAndReplaceFile(targetFile, lookingString, stringToAdd, last)
     console.log('💙  Auth middleware added to application successfully 💙')
