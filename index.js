@@ -9,9 +9,17 @@ const {
   SELECTPROJECT,
   COREQUESTIONS,
   ROUTEQUESTIONS,
-  SELECTCRUDROUTE,
-  CURR_DIR
+  SELECTCRUDROUTE
 } = require('./questions');
+
+const {
+  addCrudToRouter,
+  addRouteToApplication,
+  createDirectoryContent,
+  findAndReplaceFile,
+  upperFirstLetter,
+  CURR_DIR
+} = require('./helpers')
 
 inquirer.prompt(SELECTPROJECT).then(answer => {
   const selectedProject = answer['project-choice'];
@@ -196,79 +204,50 @@ route = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
   console.log(`💙  ${upperFirstModelName} model and route added to application successfully 💙`)
 });
 
-cors = () => {
-  if (fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`app.use(require('surprise-cors')`))
+cors = async () => {
+  if (
+    fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`app.use(require('surprise-cors')`) ||
+    fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`require('cors')`) ||
+    fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`require("cors")`)
+  )
     return console.log('⚠️  This application already has CORS defined  ⚠️');
+
+  const { corsType } = await inquirer.prompt({
+    name: 'corsType',
+    message: 'Select which type of CORS do You need',
+    type: 'list',
+    choices: [
+      {
+        name: 'Basic (only origin (URLs) and Headers are customizable)',
+        value: 'Basic'
+      },
+      {
+        name: 'Advanced (full CORS configuration)',
+        value: 'Advanced'
+      }
+    ]
+  })
 
   const targetFile = `${CURR_DIR}/app.js`
   const lookingString = `app.use(`;
-  const stringToAdd = `app.use(require('surprise-cors')('*')) // You can replace '*' to array of hosts like ["http://localhost:4200", "https://www.myapp.com"];`;
-  findAndReplaceFile(targetFile, lookingString, stringToAdd)
-  console.log('💙  Default CORS added to app.js successfully 💙');
-
-  if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-cors')) {
-    console.log('Running npm install...')
-    exec(`npm install surprise-cors --save`).stdout.pipe(process.stdout)
-  }
-};
-
-createDirectoryContent = (templatePath, newProjectPath, databaseName = '') => {
-  const filesToCreate = fs.readdirSync(templatePath);
-  filesToCreate.forEach(file => {
-    const origFilePath = `${templatePath}/${file}`;
-    const stats = fs.statSync(origFilePath);
-
-    if (stats.isFile()) {
-      const writePath = `${CURR_DIR}/${newProjectPath}/${file}`;
-      const content = fs.readFileSync(origFilePath, 'utf8').replace('Your-database-name', databaseName);
-      fs.writeFileSync(writePath, content, 'utf8');
-    } else if (stats.isDirectory()) {
-      fs.mkdirSync(`${CURR_DIR}/${newProjectPath}/${file}`);
-      createDirectoryContent(`${templatePath}/${file}`, `${newProjectPath}/${file}`);
+  if (corsType === 'Advanced') {
+    const stringToAdd = 'app.use(cors())'
+    findAndReplaceFile(targetFile, lookingString, stringToAdd)
+    const lookingImportString = '= require('
+    const importStringToAdd = `const cors = require('cors')`
+    findAndReplaceFile(targetFile, lookingImportString, importStringToAdd)
+    if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('"cors')) {
+      console.log('Running npm install...')
+      exec(`npm install cors --save`).stdout.pipe(process.stdout)
     }
-  });
+  } else {
+    const stringToAdd = `app.use(require('surprise-cors')('*')) // You can replace '*' to array of hosts like ["http://localhost:4200", "https://www.myapp.com"]`
+    findAndReplaceFile(targetFile, lookingString, stringToAdd)
+    if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-cors')) {
+      console.log('Running npm install...')
+      exec(`npm install surprise-cors --save`).stdout.pipe(process.stdout)
+    }
+  }
+
+  console.log('💙  Default CORS added to app.js successfully 💙');
 };
-
-addRouteToApplication = (routeName, lowerCaseName) => {
-  if (!fs.existsSync(`${CURR_DIR}/app.js`))
-    return false;
-
-  const targetFile = `${CURR_DIR}/app.js`;
-  const lookingString = `app.use(`
-  const stringToAdd = `app.use('${routeName}', require('./routes/${lowerCaseName}/router'))\n`;
-  findAndReplaceFile(targetFile, lookingString, stringToAdd, true)
-
-  return true;
-};
-
-addCrudToRouter = routeName => {
-  const nounSelectedRoute = pluralize(routeName, 1);
-  const modelName = upperFirstLetter(nounSelectedRoute);
-  const targetFile = `${CURR_DIR}/routes/${routeName}/router.js`;
-  const lookingString = 'const router';
-  const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
-const { crud } = require('surprise-crud');
-  
-crud(${modelName}, router, { pathFromCollection: false });\n`;
-  findAndReplaceFile(targetFile, lookingString, stringToAdd, true)
-};
-
-upperFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
-
-findAndReplaceFile = (targetFile, lookingString, stringToAdd, last = false) => {
-  const content = fs.readFileSync(targetFile, 'utf8');
-  const contentArray = content.split('\n');
-  const reversedContentArray = content.split('\n').reverse();
-  const lookingPart = last ? reversedContentArray.find(string => string.includes(lookingString)) : contentArray.find(string => string.includes(lookingString))
-  const lookingPartIndex = last ? reversedContentArray.indexOf(lookingPart) : contentArray.indexOf(lookingPart);
-
-  if (last)
-    reversedContentArray.splice(lookingPartIndex - 1, 0, stringToAdd);
-  else
-    contentArray.splice(lookingPartIndex, 0, stringToAdd);
-
-  if (last)
-    fs.writeFileSync(targetFile, reversedContentArray.reverse().join('\n'));
-  else
-    fs.writeFileSync(targetFile, contentArray.join('\n'));
-}

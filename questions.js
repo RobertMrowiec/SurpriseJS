@@ -1,8 +1,5 @@
 const fs = require('fs');
-const CURR_DIR = process.cwd();
 const pluralize = require('pluralize');
-
-module.exports.CURR_DIR = CURR_DIR;
 
 module.exports.SELECTCRUDROUTE = currentDir => {
   if (fs.existsSync(`${currentDir}/routes`)) {

@@ -68,7 +68,7 @@ Method: GET, path: /login/verify/:token
 Generates core of Node.js application like `package.json`, folders for `routes` and `models`, and most important:
 
 _app.js_
-```
+```app.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -88,12 +88,24 @@ module.exports = dbUrl => mongoose.connect(dbUrl, {
 and
 
 _index.js_
-```
+```index.js_
 #!/usr/bin/env node
 require('./app')('mongodb://localhost/Your-database-name').then(app => {
   console.log('Server is running on port 80');
   app.listen(80);
 });
+```
+
+App structure:
+```structure
+project
+├── models/
+│
+├── routes/
+│
+├── app.js
+├── index.js
+├── package.json
 ```
 
 In the meantime it also install all required NPMs: <br>
@@ -103,25 +115,45 @@ In the meantime it also install all required NPMs: <br>
 ## CORS
 Adds CORS handling to the application. You can customize on which URLs Your application will work.
 
+After selecting this, You have option to choose between basic and advanced CORS configuration.
+
+### Basic
 Default setup:
-```
+```app.js
 app.use(require('surprise-cors')('*'))
 ```
 
 And customised URLs:
 
  -single URL:
-```
+```app.js
 app.use(require('surprise-cors')('http://localhost:3000'))
 ```
+
  -multiple URLs:
-```
+```app.js
 app.use(require('surprise-cors')(['http://localhost:3000', 'https://myapp.com']))
 ```
 
+### Advanced
+Default setup:
+```app.js
+const cron = require('cron')
+app.use(cron())
+```
+
+Customization:
+* [cors](https://github.com/expressjs/cors#readme)
+
 ## CRUD
+Adds default CRUD functionality to specified route.
 
-
+You can select multiple routes from available list created based on `/routes` folder. After selecting some of them, `routes/*model*/route.js` will have:
+```
+crud(*Model*, router, { pathFromCollection: false });
+```
+inside.
+In the meantime, required NPMs will be installed.
 
 ## Route
 Generates route and model for endpoint specified by user.
@@ -134,15 +166,15 @@ Now, in new, just created directory _routes/users_ will be 2 files:
 * `router.js`
 * `details.js`
 
-with commented options how to define own new endpoints.
+with commented options with information how to define own endpoints.
 
 # Problems 
-If You get some problems, don't be afraid to contact or create an issue :)
+If You get some problems, don't be afraid to create an issue on GitHub :)
 
 # Links
 
 ## Github
-	https://github.com/RobertMrowiec/surpriseJS
+	https://github.com/RobertMrowiec/SurpriseJS
 
 ## NPM
 	https://www.npmjs.com/package/surpriseJS
