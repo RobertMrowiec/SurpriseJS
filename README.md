@@ -1,3 +1,5 @@
+![logo](./docs/images/logo-black.png)
+
 SurpriseJS is an open-source JavaScript library / framework which easily generates your Node.js backend with MongoDB database connection with just a few clicks.
 
 <i> *At this moment it works only with above-mentioned framework and DB, but soon will also work with PostgreSQL and Koa.js. Every help is appreciated. </i>

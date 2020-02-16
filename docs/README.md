@@ -1,3 +1,5 @@
+![logo](./images/logo-black.png)
+
 # Overview 
 This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) framework works. <br> 
 <br>
