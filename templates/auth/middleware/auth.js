@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {
-  const token = req.get('Authorization');
+  const token = req.get('Authorization').split('Bearer ')[1];
   const secret = process.env.SECRET || 'You_better_change_this'; // You can use dotenv package to access process.env.variables
 
   if (!token)

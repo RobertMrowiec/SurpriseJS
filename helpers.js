@@ -63,9 +63,21 @@ findAndReplaceFile = (targetFile, lookingString, stringToAdd, last = false) => {
     fs.writeFileSync(targetFile, contentArray.join('\n'));
 }
 
-module.exports.CURR_DIR = CURR_DIR;
+asyncExec = (cmd) => {
+  const exec = require('child_process').exec;
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error);
+      }
+      resolve(stdout ? stdout : stderr);
+    });
+  });
+}
+
 module.exports.addCrudToRouter = addCrudToRouter;
 module.exports.addRouteToApplication = addRouteToApplication;
 module.exports.createDirectoryContent = createDirectoryContent;
 module.exports.findAndReplaceFile = findAndReplaceFile;
 module.exports.upperFirstLetter = upperFirstLetter;
+module.exports.asyncExec = asyncExec;

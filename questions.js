@@ -25,7 +25,8 @@ const SELECTPROJECT = {
   name: 'project-choice',
   type: 'list',
   message: 'What project template would you like to generate?',
-  choices: fs.readdirSync(`${__dirname}/templates`)
+  choices: fs.readdirSync(`${__dirname}/templates`),
+  suffix: ' (ctrl + c to exit)'
 };
 
 module.exports.SELECTPROJECT = SELECTPROJECT;
