@@ -25,23 +25,23 @@ inquirer.prompt(SELECTPROJECT).then(answer => {
   const selectedProject = answer['project-choice'];
   const templatePath = `${__dirname}/templates/${selectedProject}`;
 
-  if (selectedProject !== 'surprisejs-core' && !fs.existsSync(`${CURR_DIR}/app.js`))
+  if (selectedProject !== 'core' && !fs.existsSync(`${CURR_DIR}/app.js`))
     return console.log('⚠️  app.js does not exists, maybe You are not in project root directory, or should use surprisejs-core first?  ⚠️');
 
   switch (selectedProject) {
-    case 'surprisejs-auth':
+    case 'auth':
       auth(templatePath);
       break;
-    case 'surprisejs-core':
+    case 'core':
       core(templatePath);
       break;
-    case 'surprisejs-cors':
+    case 'cors':
       cors();
       break;
-    case 'surprisejs-crud':
+    case 'crud':
       crud();
       break;
-    case 'surprisejs-route':
+    case 'route':
       route(templatePath);
       break;
     default:

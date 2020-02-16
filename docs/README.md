@@ -168,6 +168,62 @@ Now, in new, just created directory _routes/users_ will be 2 files:
 
 with commented options with information how to define own endpoints.
 
+# Examples
+
+## Steps:
+
+### 1. Generate base application structure with main files
+Select `core` option
+
+![logo](./images/core1.png ":size=500x200")
+
+Provide project name and database name
+
+![logo](./images/core2.png ":size=500x200")
+
+Next just move to your project folder and continue.
+
+### 2. Generate some routes for Your application
+Select `route` option
+
+![logo](./images/route1.png  ":size=500x200")
+
+Provide model name and endpoint url
+
+![logo](./images/route2.png  ":size=500x200")
+
+### 3. Generate default CRUD for selected route
+Select `crud` option
+
+![logo](./images/crud1.png  ":size=500x200")
+
+Choose from multi-select on which route You want to add default CRUD
+
+![logo](./images/crud2.png  ":size=500x200")
+![logo](./images/crud3.png  ":size=500x200")
+
+### 4. Add Authentication to application
+Select `auth` option
+
+![logo](./images/auth1.png  ":size=500x200")
+
+Provide endpoints prefix
+
+![logo](./images/auth2.png  ":size=500x200")
+
+### 5. Add CORS functionality
+Select `cors` option
+
+![logo](./images/cors1.png  ":size=500x200")
+
+Choose between `Basic` and `Advanced` configuration
+
+![logo](./images/cors2.png  ":size=500x200")
+
+No matter what You choose, SurpriseJS will install required NPM and add configuration to `app.js`
+
+![logo](./images/cors3.png  ":size=500x200")
+
 # Problems 
 If You get some problems, don't be afraid to create an issue on GitHub :)
 
