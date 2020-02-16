@@ -27,7 +27,7 @@ You will need the following things installed on your computer.
 
 Just simply install package with npm globally:
 
-`npm install -g SurpriseJS`
+`npm install -g surprisejs`
 
 # Configuration
 

@@ -1,17 +1,14 @@
 {
   "name": "surprisejs",
-  "version": "0.0.1",
-  "description": "SurpriseJS is a new framework for Node.js. It uses express.js and mongodb with mongoose",
+  "version": "0.0.2",
+  "description": "SurpriseJS is a new CLI framework for Node.js. It uses express.js and mongodb with mongoose",
   "main": "index.js",
-  "scripts": {
-    "test": "npm test"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RobertMrowiec/SurpriseJS.git"
   },
   "bin": {
-    "generate": "./index.js"
+    "surprisejs": "./index.js"
   },
   "keywords": [
     "node.js",
@@ -19,14 +16,15 @@
     "surpriseJS",
     "mongoDB",
     "mongoose",
-    "express"
+    "express",
+    "cli"
   ],
   "author": "Robert Mrowiec",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/RobertMrowiec/SurpriseJS/issues"
   },
-  "homepage": "https://github.com/RobertMrowiec/SurpriseJS#readme",
+  "homepage": "https://robertmrowiec.github.io/SurpriseJS",
   "dependencies": {
     "inquirer": "^7.0.1",
     "pluralize": "^8.0.0",
