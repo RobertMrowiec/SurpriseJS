@@ -29,7 +29,7 @@ Just simply install package with npm globally:
 
 # Configuration
 
-Just type `generate surprisejs` in Your terminal and select one of available methods described in section below:
+Just type `surprisejs` in Your terminal and select one of available methods described in section below:
 
 * `auth`
 * `core`
