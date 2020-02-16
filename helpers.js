@@ -20,9 +20,6 @@ createDirectoryContent = (templatePath, newProjectPath, databaseName = '') => {
 };
 
 addRouteToApplication = (routeName, lowerCaseName) => {
-  if (!fs.existsSync(`${CURR_DIR}/app.js`))
-    return false;
-
   const targetFile = `${CURR_DIR}/app.js`;
   const lookingString = `app.use(`
   const stringToAdd = `app.use('${routeName}', require('./routes/${lowerCaseName}/router'))\n`;
@@ -35,6 +32,9 @@ addCrudToRouter = routeName => {
   const nounSelectedRoute = pluralize(routeName, 1);
   const modelName = upperFirstLetter(nounSelectedRoute);
   const targetFile = `${CURR_DIR}/routes/${routeName}/router.js`;
+  if (fs.readFileSync(targetFile).includes(`crud(${modelName}`)) {
+    return console.log('❗️ Selected route already has CRUD defined ❗');
+  }
   const lookingString = 'const router';
   const stringToAdd = `const ${modelName} = require('../../models/${modelName}');
 const { crud } = require('surprise-crud');
@@ -63,13 +63,11 @@ findAndReplaceFile = (targetFile, lookingString, stringToAdd, last = false) => {
     fs.writeFileSync(targetFile, contentArray.join('\n'));
 }
 
-asyncExec = (cmd) => {
+asyncExec = cmd => {
   const exec = require('child_process').exec;
   return new Promise((resolve, reject) => {
     exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        console.warn(error);
-      }
+      if (error) console.warn(error);
       resolve(stdout ? stdout : stderr);
     });
   });

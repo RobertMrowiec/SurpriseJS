@@ -108,7 +108,7 @@ core = templatePath => inquirer.prompt(COREQUESTIONS).then(async answers => {
   const databaseName = answers['database-name'];
 
   if (fs.existsSync(`${CURR_DIR}/${projectName}`)) {
-    return console.log('project with specific folder name already exists')
+    return console.log('❗️ Project with specific folder name already exists ❗️')
   }
   fs.mkdirSync(`${CURR_DIR}/${projectName}`);
   createDirectoryContent(templatePath, projectName, databaseName);
@@ -146,7 +146,7 @@ cors = async () => {
     fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`require('cors')`) ||
     fs.readFileSync(`${CURR_DIR}/app.js`, 'utf8').includes(`require("cors")`)
   )
-    return console.log('⚠️  This application already has CORS defined  ⚠️');
+    return console.log('❗️ This application already has CORS defined ❗️');
 
   const { corsType } = await inquirer.prompt({
     name: 'corsType',
@@ -205,6 +205,10 @@ route = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
 
   if (!response)
     return console.log('⚠️  app.js does not exists, maybe You are in wrong directory?  ⚠️');
+
+  if (fs.existsSync(`${CURR_DIR}/routes/${lowerCasePluralModelName}`)) {
+    return console.log('❗️ Specific route already exists ❗️')
+  }
 
   fs.mkdirSync(`${CURR_DIR}/routes/${lowerCasePluralModelName}`);
   filesToCreate.forEach(file => {
