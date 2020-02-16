@@ -24,7 +24,7 @@ module.exports.SELECTCRUDROUTE = currentDir => {
 const SELECTPROJECT = {
   name: 'project-choice',
   type: 'list',
-  message: 'What project template would you like to generate?',
+  message: 'Which project template would you like to generate?',
   choices: fs.readdirSync(`${__dirname}/templates`),
   suffix: ' (ctrl + c to exit)'
 };

@@ -48,6 +48,24 @@ By default it requires sending `Authorization: Bearer *token*` header during req
 
 After select this option, You will be asked about Your application endpoints prefix (i.e. `/api`).
 
+Auth middleware adds decoded token to `req.user` by default. So You can change 
+```
+{ foo: 'bar' }
+```
+in token generate endpoint with user data from database. Something like:
+```
+  const user = await User.findOne({ email: req.body.email })
+  if (user.password == hashed(req.body.password)){ // hashed is example of function to hash password for future compare
+    const token = jwt.sign(user, secret);
+    return res.status(200).json({
+      token,
+      message: 'Succesfully logged'
+    })
+  }
+```
+
+Of course You have to had User model defined and handle login by provided email and password.
+
 In the meantime:
 
  -[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) will be installed, 
@@ -164,67 +182,79 @@ After selecting route option, You have to provide:
 * Model name (i.e. `Users`)
 * Route name (i.e. `api/users`)
 
-Now, in new, just created directory _routes/users_ will be 2 files:
-* `router.js`
-* `details.js`
+Now, the routes structure will look like this:
+```structure
+routes/
+└─── users/
+    └── details.js
+    └── router.js
+```
 
-with commented options with information how to define own endpoints.
+New files has commented options with information how to define own endpoints if needed.
+
+### Available Methods
+*  Get 
+```
+Method: GET, path: /?filter=key&filterBy=value
+```
+*  GetById 
+```
+Method: GET, path: /:id
+```
+*  GetPagination
+```
+Method: GET, path: /page/:page/limit/:limit?filter=key&filterBy=value
+```
+*  Post
+```
+Method: POST, path: /
+```
+*  Put
+```
+Method: PUT, path: /:id
+```
+*  Delete
+```
+Method: DELETE, path: /:id
+```
+
+More details and options (i.e. about `filtering`) here: [CRUD-documentation](https://robertmrowiec.github.io/surprise-crud-page/#/?id=available-methods)
 
 # Examples
 
 ## Steps:
 
 ### 1. Generate base application structure with main files
-Select `core` option
+* Select `core` option
+* Provide project name and database name
+* Move to your project folder and continue.
 
-![logo](./images/core1.png ":size=500x200")
-
-Provide project name and database name
-
-![logo](./images/core2.png ":size=500x200")
-
-Next just move to your project folder and continue.
+![logo](./images/core.gif)
 
 ### 2. Generate some routes for Your application
-Select `route` option
+* Select `route` option
+* Provide model name and endpoint url ( or click enter for default value )
 
-![logo](./images/route1.png  ":size=500x200")
-
-Provide model name and endpoint url
-
-![logo](./images/route2.png  ":size=500x200")
+![logo](./images/route.gif)
 
 ### 3. Generate default CRUD for selected route
-Select `crud` option
+* Select `crud` option
+* Choose from multi-select on which route You want to add default CRUD
 
-![logo](./images/crud1.png  ":size=500x200")
-
-Choose from multi-select on which route You want to add default CRUD
-
-![logo](./images/crud2.png  ":size=500x200")
-![logo](./images/crud3.png  ":size=500x200")
+![logo](./images/crud.gif)
 
 ### 4. Add Authentication to application
-Select `auth` option
+* Select `auth` option
+* Provide endpoints prefix
 
-![logo](./images/auth1.png  ":size=500x200")
-
-Provide endpoints prefix
-
-![logo](./images/auth2.png  ":size=500x200")
+![logo](./images/auth.gif)
 
 ### 5. Add CORS functionality
-Select `cors` option
+* Select `cors` option
+* Choose between `Basic` and `Advanced` configuration
+* No matter what You choose, SurpriseJS will install required NPM and add configuration to `app.js`
 
-![logo](./images/cors1.png  ":size=500x200")
-
-Choose between `Basic` and `Advanced` configuration
-
-![logo](./images/cors2.png  ":size=500x200")
-
-No matter what You choose, SurpriseJS will install required NPM and add configuration to `app.js`
-
-![logo](./images/cors3.png  ":size=500x200")
+![logo](./images/cors.gif)
 
 # Problems 
 If You get some problems, don't be afraid to create an issue on GitHub :)

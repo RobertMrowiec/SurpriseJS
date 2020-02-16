@@ -188,6 +188,7 @@ cors = async () => {
     }
   }
   console.log('💙  Default CORS added to app.js successfully 💙');
+  return setTimeout(() => main(), 750)
 };
 
 route = templatePath => inquirer.prompt(ROUTEQUESTIONS).then(answers => {
