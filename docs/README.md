@@ -138,12 +138,19 @@ Adds CORS handling to the application. You can customize on which URLs Your appl
 After selecting this, You have option to choose between basic and advanced CORS configuration.
 
 ### Basic
+Default schema:
+```
+app.use(require('surprisejs-cors)( allowedOrigins, allowedHeaders ))
+```
+
+`allowedHeaders` is optional
+
 Default setup:
 ```app.js
 app.use(require('surprise-cors')('*'))
 ```
 
-And customised URLs:
+#### Customised URLs:
 
  -single URL:
 ```app.js
@@ -153,6 +160,12 @@ app.use(require('surprise-cors')('http://localhost:3000'))
  -multiple URLs:
 ```app.js
 app.use(require('surprise-cors')(['http://localhost:3000', 'https://myapp.com']))
+```
+
+#### Customised Headers:
+```
+const headers = 'Content-Type, Authorization, X-Requested-With' // Your list of accepted headers
+app.use(require('surprise-cors')('http://localhost:3000', headers))
 ```
 
 ### Advanced
@@ -172,25 +185,7 @@ You can select multiple routes from available list created based on `/routes` fo
 ```
 crud(*Model*, router, { pathFromCollection: false });
 ```
-inside.
 In the meantime, required NPMs will be installed.
-
-## Route
-Generates route and model for endpoint specified by user.
-
-After selecting route option, You have to provide:
-* Model name (i.e. `Users`)
-* Route name (i.e. `api/users`)
-
-Now, the routes structure will look like this:
-```structure
-routes/
-└─── users/
-    └── details.js
-    └── router.js
-```
-
-New files has commented options with information how to define own endpoints if needed.
 
 ### Available Methods
 *  Get 
@@ -219,6 +214,23 @@ Method: DELETE, path: /:id
 ```
 
 More details and options (i.e. about `filtering`) here: [CRUD-documentation](https://robertmrowiec.github.io/surprise-crud-page/#/?id=available-methods)
+
+## Route
+Generates route and model for endpoint specified by user.
+
+After selecting route option, You have to provide:
+* Model name (i.e. `Users`)
+* Route name (i.e. `api/users`)
+
+Now, the routes structure will look like this:
+```structure
+routes/
+└─── users/
+    └── details.js
+    └── router.js
+```
+
+New files has commented options with information how to define own endpoints if needed.
 
 # Examples
 

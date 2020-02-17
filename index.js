@@ -1,3 +1,4 @@
 #!/usr/bin/env node
-require('./functions')
-main()
+const { main } = require('./functions');
+
+main();

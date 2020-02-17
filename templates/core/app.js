@@ -10,5 +10,5 @@ app.use(bodyParser.json());
 
 module.exports = dbUrl => mongoose.connect(dbUrl, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 }).then(() => app);
