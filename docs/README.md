@@ -1,4 +1,4 @@
-![logo](./images/logo-black.png)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/SurpriseJS/master/docs/images/logo-black.png)
 
 # Overview 
 This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) framework works. <br> 
@@ -277,4 +277,4 @@ If You get some problems, don't be afraid to create an issue on GitHub :)
 	https://github.com/RobertMrowiec/SurpriseJS
 
 ## NPM
-	https://www.npmjs.com/package/surpriseJS
+	https://www.npmjs.com/package/surprisejs
