@@ -63,6 +63,7 @@ const { crud } = require('surprise-crud');
 crud(${modelName}, router, { pathFromCollection: false });\n`;
 
   findAndReplaceFile(targetFile, lookingString, stringToAdd, true);
+  console.log(`💙  CRUD added to ${routeName} route successfully 💙`);
 };
 
 const asyncExec = cmd => new Promise(resolve => {

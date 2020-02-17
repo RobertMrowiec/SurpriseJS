@@ -126,7 +126,6 @@ const crud = async () => {
     const selectedRoutes = answers['route-crud'];
     selectedRoutes.forEach(selectedRoute => {
       addCrudToRouter(selectedRoute);
-      console.log(`💙  CRUD added to ${selectedRoute} route successfully 💙`);
     });
   });
 
@@ -282,7 +281,7 @@ const main = () => inquirer.prompt(SELECTPROJECT).then(answer => {
   const templatePath = `${__dirname}/templates/${selectedProject}`;
 
   if (selectedProject !== 'core' && !fs.existsSync(`${CURR_DIR}/app.js`))
-    return console.log('⚠️  app.js does not exists, maybe You are not in project root directory, or should use surprisejs-core first?  ⚠️');
+    return console.log('⚠️  app.js does not exists, maybe You are not in project root directory, or should use CORE option first?  ⚠️');
 
   switch (selectedProject) {
     case 'auth':
