@@ -122,8 +122,12 @@ const crud = async () => {
   if (SELECTCRUDROUTE(CURR_DIR) === false)
     return console.log('⚠️   Empty routes directory, use surprise-route option first ⚠️');
 
+
   await inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
     const selectedRoutes = answers['route-crud'];
+    if (selectedRoutes.includes('login'))
+      return console.log('❗️ CRUD can`t be added to login endpoint ❗️');
+
     selectedRoutes.forEach(selectedRoute => {
       addCrudToRouter(selectedRoute);
     });

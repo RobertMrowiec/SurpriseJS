@@ -1,19 +1,19 @@
 ![logo](https://raw.githubusercontent.com/RobertMrowiec/SurpriseJS/master/docs/images/logo-black.png)
 
 # Overview 
-This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) framework works. <br> 
+This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) generator works. <br> 
 <br>
 
-SurpriseJS is an open-source JavaScript library / framework which easily generates your Node.js backend with MongoDB database connection with just a few clicks.
+SurpriseJS is an open-source JavaScript library / express bootstrapper which easily generates your Node.js backend with MongoDB database connection with just a few clicks.
 
 <i> *At this moment it works only with above-mentioned framework and DB, but soon will also work with PostgreSQL and Koa.js. Every help is appreciated. </i>
 
-This framework can generate: 
+This library can generate: 
 
 * Core of Node.js application
 * Basic CRUD ( with pagination and filtering )
 * Routes with models
-* Auth (by JsonWebToken) with authorization middleware
+* Auth (by JSONWebToken) with authorization middleware
 * CORS
 
 ## Prerequisites
@@ -48,11 +48,11 @@ By default it requires sending `Authorization: Bearer *token*` header during req
 
 After select this option, You will be asked about Your application endpoints prefix (i.e. `/api`).
 
-Auth middleware adds decoded token to `req.user` by default. So You can change 
+Auth middleware adds decoded token to `req.user` by default. So as typical expectation You can easily change 
 ```
 { foo: 'bar' }
 ```
-in token generate endpoint with user data from database. Something like:
+in token generate endpoint function to user data from database. Something like:
 ```
   const user = await User.findOne({ email: req.body.email })
   if (user.password == hashed(req.body.password)){ // hashed is example of function to hash password for future compare
