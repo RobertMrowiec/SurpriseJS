@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/RobertMrowiec/SurpriseJS/master/docs/images/logo-black.png)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/logo-black.png)
 
 # Overview 
 This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) generator works. <br> 
@@ -232,6 +232,12 @@ routes/
 
 New files has commented options with information how to define own endpoints if needed.
 
+### Nested routes
+You can also create nested routes by separating them with "/".
+- After selecting route option, at routeName type `core/clients`.
+- `routes/` folder will now have nested `core` directory inside with `clients` routes.
+- `models/` folder also will now have nested `core` directory inside with `Client` model.
+
 # Examples
 
 ## Steps:
@@ -241,32 +247,38 @@ New files has commented options with information how to define own endpoints if 
 * Provide project name and database name
 * Move to your project folder and continue.
 
-![logo](./images/core.gif)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/core.gif)
 
-### 2. Generate some routes for Your application
+### 2.1 Generate some routes for Your application
 * Select `route` option
 * Provide model name and endpoint url ( or click enter for default value )
 
-![logo](./images/route.gif)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/route.gif)
 
-### 3. Generate default CRUD for selected route
+### 2.2 Generate nested routes
+* Select `route` option
+* Provide model name with slash ('/') and endpoint url ( or click enter for default value )
+
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/nested.gif)
+
+### 3 Generate default CRUD for selected route
 * Select `crud` option
 * Choose from multi-select on which route You want to add default CRUD
 
-![logo](./images/crud.gif)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/crud.gif)
 
 ### 4. Add Authentication to application
 * Select `auth` option
 * Provide endpoints prefix
 
-![logo](./images/auth.gif)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/auth.gif)
 
 ### 5. Add CORS functionality
 * Select `cors` option
 * Choose between `Basic` and `Advanced` configuration
 * No matter what You choose, SurpriseJS will install required NPM and add configuration to `app.js`
 
-![logo](./images/cors.gif)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/cors.gif)
 
 # Problems 
 If You get some problems, don't be afraid to create an issue on GitHub :)
