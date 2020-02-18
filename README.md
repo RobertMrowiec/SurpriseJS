@@ -1,4 +1,4 @@
-![logo](./docs/images/logo-black.png)
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/logo-black.png)
 
 SurpriseJS is an open-source JavaScript library / express bootstrapper which easily generates your Node.js backend with MongoDB database connection with just a few clicks.
 
