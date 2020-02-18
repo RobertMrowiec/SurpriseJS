@@ -120,7 +120,7 @@ const core = templatePath => inquirer.prompt(COREQUESTIONS).then(async answers =
 
 const crud = async () => {
   if (SELECTCRUDROUTE(CURR_DIR) === false)
-    return console.log('⚠️   Empty routes directory, use surprise-route option first ⚠️');
+    return console.log('⚠️   Empty routes directory, use route option first ⚠️');
 
 
   await inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
