@@ -280,8 +280,26 @@ You can also create nested routes by separating them with "/".
 
 ![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/cors.gif)
 
+### 6. Checking if application works:
+* Type `npm start` in project directory
+
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/start.gif)
+
+* Open [Postman](https://www.postman.com/) or other API development tool.
+* Type in url adress: `http://localhost:3000/api/users` while `api/users` is based on Your defined routes.
+* If You have `route` and `CRUD` defined for specific endpoint, You should see empty array. Now let's fill it with some data.
+* Select method `POST` and as Body use `raw` option with `JSON` language. In this way send empty object `{}`. This will return object with:
+  - _id,
+  - createdAt,
+  - updatedAt,
+  - __v 
+* Now retry previous url ( `http://localhost:3000/api/users` ) and You should see array with one object.
+* If You want to add keys and values to model, just move to `models/` folder , select one of created models and add new key like inside file example shows
+
+![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/post.gif)
+
 # Problems 
-If You get some problems, don't be afraid to create an issue on GitHub :)
+If You have any problems, don't be afraid to create an issue on GitHub :)
 
 # Links
 
