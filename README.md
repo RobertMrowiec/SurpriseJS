@@ -9,7 +9,7 @@ SurpriseJS is an open-source JavaScript library / express bootstrapper which eas
 This library can generate: 
 
 * Core of Node.js application
-* Basic CRUD ( with pagination and filtering )
+* Basic CRUD (with pagination and filtering)
 * Routes with models
 * Auth (by JsonWebToken) with authorization middleware
 * CORS
@@ -29,7 +29,7 @@ Just simply install package with npm globally:
 
 # Configuration
 
-Just type `surprisejs` in Your terminal and select one of available methods described in section below:
+Just type `surprisejs` in your terminal and select one of available methods described in section below:
 
 * `auth`
 * `core`
