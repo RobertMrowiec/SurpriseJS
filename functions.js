@@ -119,21 +119,29 @@ const core = templatePath => inquirer.prompt(COREQUESTIONS).then(async answers =
 });
 
 const crud = async () => {
+  let forceBreak = false;
   if (SELECTCRUDROUTE(CURR_DIR) === false)
     return console.log('⚠️   Empty routes directory, use route option first ⚠️');
 
 
   await inquirer.prompt(SELECTCRUDROUTE(CURR_DIR)).then(answers => {
     const selectedRoutes = answers['route-crud'];
-    if (selectedRoutes.includes('login'))
+    if (selectedRoutes.length === 0) {
+      forceBreak = true;
+      return;
+    }
+
+    if (selectedRoutes.includes('login')) {
+      forceBreak = true;
       return console.log('❗️ CRUD can`t be added to login endpoint ❗️');
+    }
 
     selectedRoutes.forEach(selectedRoute => {
       addCrudToRouter(selectedRoute);
     });
   });
 
-  if (!fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-crud')) {
+  if (!forceBreak && !fs.readFileSync(`${CURR_DIR}/package.json`, 'utf8').includes('surprise-crud')) {
     console.log('Running npm install...');
     const installResponse = await asyncExec('npm install surprise-crud --save');
     console.log(installResponse);
