@@ -16,10 +16,11 @@ This library can generate:
 
 ## Things left to do:
 * [ ] Select between JS and TS
-* [ ] Koa.js with PostgreSQL
-* [ ] File handler with AWS S3, Firebase Storage and local directory
+* [ ] Koa.js
+* [ ] PostgreSQL
+* [ ] File handler with AWS S3, Firebase Storage or local directory
 * [ ] Setup tests
-* [ ] Multi nested routes and crud 
+* [ ] Multi nested routes and crud
 
 ## Prerequisites
 You will need the following things installed on your computer.
