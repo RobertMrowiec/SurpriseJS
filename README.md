@@ -14,7 +14,7 @@ This library can generate:
 * Auth (by JsonWebToken) with authorization middleware
 * CORS
 
-## Things to do:
+## Things left to do:
 * [ ] Select between JS and TS
 * [ ] Koa.js with PostgreSQL
 * [ ] File handler with AWS S3, Firebase Storage and local directory
