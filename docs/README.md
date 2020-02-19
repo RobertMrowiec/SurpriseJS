@@ -21,6 +21,7 @@ This library can generate:
 * [ ] Koa.js with PostgreSQL
 * [ ] File handler with AWS S3, Firebase Storage and local directory
 * [ ] Setup tests
+* [ ] Multi nested routes and crud
 
 ## Prerequisites
 You will need the following things installed on your computer.

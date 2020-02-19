@@ -1,6 +1,6 @@
 {
   "name": "surprisejs",
-  "version": "0.1.43",
+  "version": "0.1.44",
   "description": "SurpriseJS is a new CLI framework for Node.js. It uses express.js and mongodb with mongoose",
   "main": "index.js",
   "repository": {
