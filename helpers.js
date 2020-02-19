@@ -11,7 +11,10 @@ const createDirectoryContent = (templatePath, newProjectPath, databaseName = '')
 
     if (stats.isFile()) {
       const writePath = `${CURR_DIR}/${newProjectPath}/${file}`;
-      const content = fs.readFileSync(origFilePath, 'utf8').replace('Your-database-name', databaseName);
+      const content = fs.readFileSync(origFilePath, 'utf8')
+        .replace('Your-database-name', databaseName)
+        .replace('your-project-name', newProjectPath.split('/')[0]);
+
       fs.writeFileSync(writePath, content, 'utf8');
     } else if (stats.isDirectory()) {
       fs.mkdirSync(`${CURR_DIR}/${newProjectPath}/${file}`);

@@ -1,7 +1,7 @@
 ![logo](https://raw.githubusercontent.com/RobertMrowiec/surprisejs-images/master/logo-black.png)
 
 # Overview 
-This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/SurpriseJS) generator works. <br> 
+This page will guide You how [`SurpriseJS`](https://www.npmjs.com/package/surprisejs) generator works. <br> 
 <br>
 
 SurpriseJS is an open-source JavaScript library / express bootstrapper which easily generates your Node.js backend with MongoDB database connection with just a few clicks.
