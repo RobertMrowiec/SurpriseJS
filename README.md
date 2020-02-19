@@ -9,10 +9,16 @@ SurpriseJS is an open-source JavaScript library / express bootstrapper which eas
 This library can generate: 
 
 * Core of Node.js application
-* Basic CRUD ( with pagination and filtering )
+* Basic CRUD (with pagination and filtering)
 * Routes with models
 * Auth (by JsonWebToken) with authorization middleware
 * CORS
+
+## Things to do:
+* [ ] Select between JS and TS
+* [ ] Koa.js with PostgreSQL
+* [ ] File handler with AWS S3, Firebase Storage and local directory
+* [ ] Setup tests
 
 ## Prerequisites
 You will need the following things installed on your computer.
